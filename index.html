@@ -46,18 +46,33 @@
       </section>
 
       <section data-transition="fade-in fade-out">
-        <h2>Disclaimer</h2>
+        <h2><i class="red">Disclaimer</i></h2>
         <p class="fragment">
-        There might be code snippets that I don't recommend you
+          There might be code snippets that <i class="qt-violet">I don't recommend</i> you
         to ever use in production.
         </p>
         <p class="fragment">
-        I'm not responsible of your actions after this talk.
+        I'm not responsible of your actions after this talk 👀.
         </p>
       </section>
 
       <section data-transition="fade-in fade-out">
-        <h3>Re-discovering Python</h3>
+        <img style="width: 90%;" src="img/closed_box.png" />
+      </section>
+
+      <section data-transition="fade-in fade-out">
+        <img style="width: 90%;" src="img/open_box.png" />
+      </section>
+
+      <section data-transition="fade-in fade-out">
+        <h3 class="r-fit-text">I want <i class="qt-lemon">you</i> to</h3>
+        <h3 class="r-fit-text"><i class="qt-neon">re</i>-discover Python</h3>
+      </section>
+
+      <!-- print("hello") -->
+
+      <section data-transition="fade-in fade-out">
+        <h3>Recap of 3.11 and 3.12</h3>
       </section>
 
       <section data-transition="fade-in fade-out">
@@ -72,7 +87,7 @@
       </section>
 
       <section data-transition="fade-in fade-out">
-        <h3>Features on 3.12</h3>
+        <h3>Features on 3.12*</h3>
         <ul>
           <li>Per-interpreter GIL</li>
           <li>Syntactic formalization of f-strings</li>
@@ -82,11 +97,13 @@
       </section>
 
       <section data-transition="fade-in fade-out">
-        <h3>Where are those improvements/features?</h3>
+        <h3 class="r-fit-text"><i class="qt-lemon">Where</i> are those</h3>
+        <h3 class="r-fit-text">improvements and features? 🤔</h3>
       </section>
 
       <section data-transition="fade-in fade-out">
-        <h3>How does Python works?</h3>
+        <h4><i class="qt-violet">but wait...</i></h4>
+        <h3>What is <i class="qt-lemon">that</i> Python?</h3>
       </section>
 
       <section data-transition="slide-in fade-out">
@@ -98,41 +115,52 @@
       </section>
 
       <section data-transition="fade-in fade-out">
-        <h3>How does <i class="yellow">C</i>Python works?</h3>
+        <h3>How does Python works?</h3>
       </section>
 
       <section data-transition="fade-in fade-out">
-        Diagrama
+        <h3>How does <i class="qt-lemon">C</i>Python works?</h3>
       </section>
 
       <section data-transition="fade-in fade-out">
-        <h3>Let's dive inside</h3>
+        <img style="width: 90%;" src="img/python_diagram.png" />
       </section>
 
       <section data-transition="fade-in fade-out">
-        Don't panic
+        <h3>Let's take a <i class="qt-lemon">quick</i> look 🫣</h3>
+      </section>
+
+      <!-- gdb -->
+
+      <section data-transition="fade-in fade-out">
+        <img style="width: 40%;" src="img/dont_panic.gif" />
       </section>
 
       <section data-transition="fade-in fade-out">
-        <h3>What's inside the code?</h3>
+        <h3>Start with the code 📝</h3>
+        <p><a href="https://github.com/python/cpython">github.com/python/cpython</a></p>
+      </section>
+
+      <section data-transition="fade-in fade-out">
+        <img style="width: 90%;" src="img/github_cpython.png" />
       </section>
 
       <section data-transition="fade-in fade-out">
         <h3>Repository overview</h3>
-        <p><a href="https://github.com/python/cpython">github.com/python/cpython</a></p>
         <ul>
-            <li class="fragment fade-in" data-fragment-index="1"><i class="blue-light">Doc</i> - documentación oficial</li>
-            <li class="fragment fade-in" data-fragment-index="2"><i class="blue-light">Include</i> - archivos de cabecera del intérprete</li>
-            <li class="fragment fade-in" data-fragment-index="3"><i class="blue-light">Grammar</i> - Gramática PEG (PEP 617)</li>
-            <li class="fragment fade-in" data-fragment-index="4"><i class="blue-light">Lib</i> - stdlib en Python puro</li>
-            <li class="fragment fade-in" data-fragment-index="5"><i class="blue-light">Modules</i> - stdlib en C</li>
-            <li class="fragment fade-in" data-fragment-index="6"><i class="blue-light">Objects</i> - Tipos incorporados</li>
-            <li class="fragment fade-in" data-fragment-index="7"><i class="blue-light">Python</i> - Tiempo de ejecución CPython</li>
+            <li class="fragment fade-in" data-fragment-index="1"><i class="qt-mandarin">Doc</i> - official docs</li>
+            <li class="fragment fade-in" data-fragment-index="2"><i class="qt-mandarin">Include</i> - interpreter header files</li>
+            <li class="fragment fade-in" data-fragment-index="3"><i class="qt-mandarin">Grammar</i> - PEG (PEP 617)</li>
+            <li class="fragment fade-in" data-fragment-index="4"><i class="qt-mandarin">Lib</i> - stdlib in pure Python</li>
+            <li class="fragment fade-in" data-fragment-index="5"><i class="qt-mandarin">Modules</i> - stdlib in C</li>
+            <li class="fragment fade-in" data-fragment-index="6"><i class="qt-mandarin">Objects</i> - Built-in types</li>
+            <li class="fragment fade-in" data-fragment-index="7"><i class="qt-mandarin">Python</i> - CPython runtime</li>
         </ul>
       </section>
 
       <section data-transition="fade-in fade-out">
-        <h3>What's the abstraction magic?</h3>
+        <h3>How does the <i class="qt-lemon">abstraction</i></h3>
+        <h3>magic works? 🧙</h3>
       </section>
 
       <section data-transition="fade-in fade-out">
@@ -399,6 +427,10 @@
 
       <section data-transition="fade-in fade-out">
         <h3>Compiling</h3>
+      </section>
+
+      <section data-transition="fade-in fade-out">
+        <img style="width: 90%;" src="img/certificado.png" />
       </section>
 
       <section data-transition="fade-in fade-out">
