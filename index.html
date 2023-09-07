@@ -66,7 +66,7 @@
 
       <section data-transition="fade-in fade-out">
         <h3 class="r-fit-text">I want <i class="qt-lemon">you</i> to</h3>
-        <h3 class="r-fit-text"><i class="qt-neon">re</i>-discover Python</h3>
+        <h3 class="r-fit-text"><i class="qt-neon">re-discover</i> Python</h3>
       </section>
 
       <!-- print("hello") -->
@@ -128,7 +128,7 @@
       </section>
 
       <section data-transition="fade-in fade-out">
-        <h3>Let's take a <i class="qt-lemon">quick</i> look 🫣</h3>
+        <h3>Have you ever <i class="qt-lemon">looked inside</i> 🫣?</h3>
       </section>
 
       <!-- gdb -->
@@ -165,7 +165,6 @@
       </section>
 
       <section data-transition="fade-in fade-out">
-        TODO
         <pre style="font-size: 60%;width: 80%;"><code class="c" data-trim data-noescape>
         #include &lt;stdio.h&gt;
 
@@ -490,11 +489,44 @@
 
       <section data-transition="fade-in fade-out">
         <h3>Memory management</h3>
+        <div id="left" class="fragment">
+          <pre style="font-size: 50%;width: 95%;"><code class="python" data-trim data-noescape>
+          l = [1, 2, 3, 4, 5]
+
+          l2 = []
+
+          l2.append(42)
+          l2.append(17)
+          l2.append("olá")
+          </code></pre>
+        </div>
+        <div id="right" class="fragment">
+          <pre style="font-size: 50%;width: 95%;"><code class="c" data-trim data-noescape>
+          int a[] = {1, 2, 3, 4, 5};
+
+          int *a2 = malloc(3 * sizeof(int));
+
+          a2[0] = 42;
+          a2[1] = 17
+          a2[2] = "olá" // BOOM!
+          </code></pre>
+          <pre style="font-size: 50%;width: 95%;" class="fragment"><code class="c" data-trim data-noescape>
+          // Not forget to free!
+          free(a2);
+          </code></pre>
+        </div>
+
+        </code></pre>
       </section>
 
       <section data-transition="fade-in fade-out">
         <h3>C pointers (1/2)</h3>
         <img style="width: 90%;" src="img/pointer.png" />
+      </section>
+
+      <section data-transition="fade-in fade-out">
+        <h3>C pointers (1/2)</h3>
+        <img style="width: 90%;" src="img/pointer2.png" />
       </section>
 
       <section data-transition="fade-in fade-out">
@@ -694,11 +726,6 @@
       </section>
 
       <section data-transition="fade-in fade-out">
-        <h3>Python extension with C</h3>
-        TODO
-      </section>
-
-      <section data-transition="fade-in fade-out">
         <h3 class="r-fit-text">Real snippets <i class="qt-neon">freshly</i> served</h3>
         <h3 class="r-fit-text">from the <i class="qt-lemon">CPython</i> repo</h3>
       </section>
@@ -781,6 +808,62 @@
 
       <section data-transition="fade-in fade-out">
         <h1>yes.</h1>
+        <h1 class="fragment" style="font-size: 500%;"><i class="qt-lemon">yes</i>.</h1>
+      </section>
+
+      <section data-transition="fade-in fade-out">
+        <h3>Python extension with C (1/4)</h3>
+        <pre style="font-size: 60%;width: 90%;"><code class="c" data-trim data-noescape>
+          static PyObject* hello(PyObject* self, PyObject* args) {
+              char *msg = "Hey there PyConPT 2023!";
+              return Py_BuildValue("s", msg);
+          }
+
+          static PyMethodDef functions[] = {
+              {"hello", (PyCFunction)hello, METH_NOARGS, NULL},
+              {NULL, NULL, 0, NULL}
+          };
+        </code></pre>
+      </section>
+
+      <section data-transition="fade-in fade-out">
+        <h3>Python extension with C (2/4)</h3>
+        <pre style="font-size: 70%;width: 80%;"><code class="c" data-trim data-noescape>
+          static struct PyModuleDef module = {
+              PyModuleDef_HEAD_INIT,
+              "pycon_pt",
+              NULL,
+              -1,
+              functions
+          };
+        </code></pre>
+      </section>
+
+      <section data-transition="fade-in fade-out">
+        <h3>Python extension with C (3/4)</h3>
+        <pre style="font-size: 70%;width: 80%;"><code class="c" data-trim data-noescape>
+          PyMODINIT_FUNC PyInit_pycon_colombia(void){
+              return PyModule_Create(&module);
+          }
+        </code></pre>
+      </section>
+
+      <section data-transition="fade-in fade-out">
+        <h3>Python extension with C (4/4)</h3>
+        <pre style="font-size: 70%;width: 80%;"><code class="python" data-trim data-noescape>
+        >>> from pycon_pt import hello
+        >>> hello()
+        'Hey there PyConPT 2023!'
+        </code></pre>
+      </section>
+
+      <section data-transition="fade-in fade-out">
+        <h3 class="r-fit-text fragment">that's an example...</h3>
+        <h1 class="r-fit-text fragment">any <i class="qt-neon">real projects</i>?</h1>
+      </section>
+
+
+      <section data-transition="fade-in fade-out">
         <div id="left30" class="fragment" data-fragment-index="2">
           <img src="img/qt_neon.png"/>
         </div>
@@ -800,8 +883,12 @@
       </section>
 
       <section data-transition="fade-in fade-out">
+        <h2>But you are <i class="qt-lemon">not alone</i></h2>
+      </section>
+
+      <section data-transition="fade-in fade-out">
         <h3 class="r-fit-text">Binding generators</h3>
-        <h3 class="r-fit-text">to the rescue</h3>
+        <h3 class="r-fit-text"><i class="qt-neon">to the rescue</i></h3>
       </section>
 
       <section data-transition="fade-in fade-out">
@@ -831,7 +918,7 @@
         <td>-</td>
       </tr>
       <tr>
-        <td><i class="green">shiboken</i></td>
+        <td><i class="qt-neon">shiboken</i></td>
         <td>Code gen</td>
         <td>C++11 (*)</td>
         <td>2.7, 3.5+</td>
@@ -871,12 +958,12 @@
         <td>-</td>
       </tr>
       <tr>
-        <td><i class="yellow">PyO3</i></td>
+        <td><i class="red">PyO3</i></td>
         <td>Code gen</td>
         <td>Rust 1.48+</td>
         <td>3.7+</td>
         <td>Apache/MIT</td>
-        <td>CPython/PyPy</td>
+        <td>CPython, PyPy</td>
       </tr>
       </table>
 
@@ -887,7 +974,7 @@
       </section>
 
       <section data-transition="fade-in fade-out">
-        <h3><i class="qt-neon">You</i> can do anything</h3>
+        <h3 class="r-fit-text"><i class="qt-neon">You</i> can do anything</h3>
       </section>
 
       <section data-transition="fade-in fade-out">
