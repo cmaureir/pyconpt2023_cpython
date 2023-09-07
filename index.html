@@ -72,27 +72,28 @@
       <!-- print("hello") -->
 
       <section data-transition="fade-in fade-out">
-        <h3>Recap of 3.11 and 3.12</h3>
+        <h3>Previously on Python</h3>
+        <h4><i class="qt-violet">Recap of 3.11 and 3.12</i></h4>
       </section>
 
       <section data-transition="fade-in fade-out">
         <h3>Features on 3.11</h3>
         <ul>
-          <li>Faster Python</li>
-          <li>Exception groups</li>
-          <li>tomllib</li>
-          <li>Fine-grained error locations in tracebacks</li>
-          <li>typing features</li>
+          <li class="fragment">Faster Python</li>
+          <li class="fragment">Exception groups</li>
+          <li class="fragment">tomllib</li>
+          <li class="fragment">Fine-grained error locations in tracebacks</li>
+          <li class="fragment">more typing features!</li>
         </ul>
       </section>
 
       <section data-transition="fade-in fade-out">
         <h3>Features on 3.12*</h3>
         <ul>
-          <li>Per-interpreter GIL</li>
-          <li>Syntactic formalization of f-strings</li>
-          <li>Improved error messages</li>
-          <li>typing features</li>
+          <li class="fragment">Per-interpreter GIL</li>
+          <li class="fragment">Syntactic formalization of f-strings</li>
+          <li class="fragment">Improved error messages</li>
+          <li class="fragment">even more typing features!</li>
         </ul>
       </section>
 
@@ -103,7 +104,7 @@
 
       <section data-transition="fade-in fade-out">
         <h4><i class="qt-violet">but wait...</i></h4>
-        <h3>What is <i class="qt-lemon">that</i> Python?</h3>
+        <h3 class="fragment">What is <i class="qt-lemon">that</i> Python?</h3>
       </section>
 
       <section data-transition="slide-in fade-out">
@@ -159,8 +160,48 @@
       </section>
 
       <section data-transition="fade-in fade-out">
-        <h3>How does the <i class="qt-lemon">abstraction</i></h3>
-        <h3>magic works? 🧙</h3>
+        <h2>Let's talk a bit about</h2>
+        <img style="width: 20%;" src="img/logo_c.png"></img>
+      </section>
+
+      <section data-transition="fade-in fade-out">
+        TODO
+        <pre style="font-size: 60%;width: 80%;"><code class="c" data-trim data-noescape>
+        #include &lt;stdio.h&gt;
+
+        void bubbleSort(int arr[], int size);
+        void printarr(int arr[], int size);
+
+        int main() {
+          int data[] = {-2, 45, 0, 11, -9};
+          int size = sizeof(data) / sizeof(data[0]);
+          bubbleSort(data, size);
+          printarr(data, size);
+        }
+
+        void bubbleSort(int arr[], int size) {
+          for (int step = 0; step &lt; size - 1; ++step)
+            for (int i = 0; i &lt; size - step - 1; ++i)
+              if (arr[i] &gt; arr[i + 1]) {
+                int temp = arr[i];
+                arr[i] = arr[i + 1];
+                arr[i + 1] = temp;
+              }
+        }
+
+        void printarr(int arr[], int size) {
+          for (int i = 0; i &lt; size; ++i) {
+            printf("%d  ", arr[i]);
+          }
+          printf("\n");
+        }
+        </code></pre>
+      </section>
+
+
+      <section data-transition="fade-in fade-out">
+        <h3 class="r-fit-text">How does Python</h3>
+        <h3 class="r-fit-text"><i class="qt-lemon">abstraction</i> works? 🧙</h3>
       </section>
 
       <section data-transition="fade-in fade-out">
@@ -172,10 +213,10 @@
       </section>
 
       <section data-transition="fade-in fade-out">
-        <pre style="font-size: 40%;width: 90%;"><code class="c" data-trim data-noescape>
+        <pre style="font-size: 45%;width: 90%;"><code class="c" data-trim data-noescape>
         struct _object {
         #if (defined(__GNUC__) || defined(__clang__)) \
-                &amp;&amp; !(defined __STDC_VERSION__ &amp;&amp; __STDC_VERSION__ >= 201112L)
+                &amp;&amp; !(defined __STDC_VERSION__ &amp;&amp; __STDC_VERSION__ &gt;= 201112L)
             // On C99 and older, anonymous union is a GCC and clang extension
             __extension__
         #endif
@@ -187,7 +228,7 @@
         #endif
             union {
                Py_ssize_t ob_refcnt;
-        #if SIZEOF_VOID_P > 4
+        #if SIZEOF_VOID_P &gt; 4
                PY_UINT32_T ob_refcnt_split[2];
         #endif
             };
@@ -201,7 +242,7 @@
       </section>
 
       <section data-transition="fade-in fade-out">
-        <pre style="font-size: 40%;width: 90%;"><code class="c" data-trim data-noescape>
+        <pre style="font-size: 80%;width: 90%;"><code class="c" data-trim data-noescape>
         // Roughly, for Linux
         struct _object {
             Py_ssize_t ob_refcnt;
@@ -215,7 +256,7 @@
         <pre style="font-size: 20%;width: 90%;"><code class="c" data-trim data-noescape>
         struct _typeobject {
           PyObject_VAR_HEAD
-          const char *tp_name; /* For printing, in format "<module>.<name>" */
+          const char *tp_name; /* For printing, in format "&lt;module&gt;.&lt;name&gt;" */
           Py_ssize_t tp_basicsize, tp_itemsize; /* For allocation */
 
           /* Methods to implement standard operations */
@@ -307,32 +348,35 @@
       </section>
 
       <section data-transition="slide-in fade-out">
-        That looks complicated, but it makes sense.
-        You have a big box, with different compartments
-        and you filled depending on what you need.
+        <h3 class="r-fit-text">That looks <i class="red">complicated</i></h3>
+        <h3 class="r-fit-text">but it <i class="qt-lemon">makes sense</i></h3>
       </section>
 
       <section data-transition="slide-in fade-out">
-        <p>Everything looks complicated</p>
-        <p>You need to learn a bit of C</p>
+        <img src="img/furniture.png"/>
       </section>
 
       <section data-transition="slide-in fade-out">
-        <h3>Python y C</h3>
+        <h3 class="r-fit-text">It's time <i class="qt-lemon">for us</i> to</h3>
+        <h3 class="r-fit-text"><i class="qt-neon">learn</i> a bit of C</h3>
+      </section>
+
+      <section data-transition="slide-in fade-out">
+        <h3>Python and C</h3>
         <div id="left">
-          <pre class="fragment fade-in" data-fragment-index="1"style="font-size: 40%;width: 90%;"><code class="python" data-trim data-noescape>
-          <span class="fragment" data-fragment-index="1"># Un comentario</span>
-          <span class="fragment" data-fragment-index="2">import mi_modulo</span>
+          <pre class="fade-in fragment" data-fragment-index="1" style="font-size: 40%;width: 90%;"><code class="python" data-trim data-noescape>
+          <span class="fragment" data-fragment-index="1"># A comment</span>
+          <span class="fragment" data-fragment-index="2">import my_module</span>
 
-          <span class="fragment" data-fragment-index="3">def suma(a, b):</span>
+          <span class="fragment" data-fragment-index="3">def add(a, b):</span>
           <span class="fragment" data-fragment-index="3">    return a + b</span>
 
 
           <span class="fragment" data-fragment-index="4">def main():</span>
-          <span class="fragment" data-fragment-index="5">    msg = "hola mundo"</span>
+          <span class="fragment" data-fragment-index="5">    msg = "Hello World"</span>
           <span class="fragment" data-fragment-index="5">    x = 3</span>
           <span class="fragment" data-fragment-index="5">    y = 0.14</span>
-          <span class="fragment" data-fragment-index="6">    z = suma(x, y)</span>
+          <span class="fragment" data-fragment-index="6">    z = add(x, y)</span>
           <span class="fragment" data-fragment-index="6">    print("%f" % z)</span>
 
           <span class="fragment" data-fragment-index="4">if __name__ == "__main__":</span>
@@ -340,19 +384,19 @@
           </code></pre>
         </div>
         <div id="right">
-          <pre class="fragment fade-in" data-fragment-index="1"style="font-size: 40%;width: 90%;"><code class="c" data-trim data-noescape>
-          <span class="fragment" data-fragment-index="1">// Un comentario</span>
-          <span class="fragment" data-fragment-index="2">#include &lt;mi_modulo.h&gt;</span>
+          <pre class="fade-in fragment" data-fragment-index="2" style="font-size: 40%;width: 90%;"><code class="c" data-trim data-noescape>
+          <span class="fragment" data-fragment-index="1">// A comment</span>
+          <span class="fragment" data-fragment-index="2">#include &lt;my_module.h&gt;</span>
 
-          <span class="fragment" data-fragment-index="3">float suma(int a, float b) {</span>
+          <span class="fragment" data-fragment-index="3">float add(int a, float b) {</span>
           <span class="fragment" data-fragment-index="3">    return a + b;</span>
           <span class="fragment" data-fragment-index="3">}</span>
 
           <span class="fragment" data-fragment-index="4">int main(){</span>
-          <span class="fragment" data-fragment-index="5">    char msg[] = "hola mundo";</span>
+          <span class="fragment" data-fragment-index="5">    char msg[] = "Hello World";</span>
           <span class="fragment" data-fragment-index="5">    int x = 3;</span>
           <span class="fragment" data-fragment-index="5">    float y = 0.14;</span>
-          <span class="fragment" data-fragment-index="6">    float z = suma(x, y);</span>
+          <span class="fragment" data-fragment-index="6">    float z = add(x, y);</span>
           <span class="fragment" data-fragment-index="6">    printf("%f", z)</span>
 
           <span class="fragment" data-fragment-index="4">    return 0;</span>
@@ -363,21 +407,21 @@
       </section>
 
       <section data-transition="fade-in slide-out">
-        <h3>Python y C <i class="ep-red">(+anotaciones de tipo)</i></h3>
+        <h3>Python and C <i class="ep-red">(+type annotations)</i></h3>
         <div id="left">
           <pre style="font-size: 40%;width: 90%;"><code class="python" data-trim data-noescape>
-          <span># Un comentario</span>
-          <span>import mi_modulo</span>
+          <span># A comment</span>
+          <span>import my_module</span>
 
-          <span>def suma(a: int, b: float) -&gt; float:</span>
+          <span>def add(a: int, b: float) -&gt; float:</span>
           <span>    return a + b</span>
 
 
           <span>def main() -&gt; None:</span>
-          <span>    msg: str = "hola mundo"</span>
+          <span>    msg: str = "Hello World"</span>
           <span>    x: int = 3</span>
           <span>    y: float = 0.14</span>
-          <span>    z: float = suma(x, y)</span>
+          <span>    z: float = add(x, y)</span>
           <span>    print("%f" % z)</span>
 
           <span>if __name__ == "__main__":</span>
@@ -386,18 +430,18 @@
         </div>
         <div id="right">
           <pre style="font-size: 40%;width: 90%;"><code class="c" data-trim data-noescape>
-          <span>// Un comentario</span>
-          <span>#include &lt;mi_modulo.h&gt;</span>
+          <span>// A comment</span>
+          <span>#include &lt;my_module.h&gt;</span>
 
-          <span>float sum(int a, float b) {</span>
+          <span>float add(int a, float b) {</span>
           <span>    return a + b;</span>
           <span>}</span>
 
           <span>int main(){</span>
-          <span>    char msg[] = "hola mundo";</span>
+          <span>    char msg[] = "Hello World";</span>
           <span>    int x = 3;</span>
           <span>    float y = 0.14;</span>
-          <span>    float z = suma(x, y);</span>
+          <span>    float z = add(x, y);</span>
           <span>    printf("%f", z)</span>
 
           <span>    return 0;</span>
@@ -408,25 +452,102 @@
       </section>
 
       <section data-transition="fade-in fade-out">
-        Types of variables (char, int, float, double, ...)
-        Declaring vs Initializing
-        Scope of variables
+        <h3>Let's learn a few more details</h3>
       </section>
 
       <section data-transition="fade-in fade-out">
-        <h3>C pointers</h3>
+        <h3>Integer<i class="qt-lemon">s</i></h3>
+        <ul>
+          <li class="fragment">There is more than <i class="qt-neon"><code class="python">int</code></i></li>
+          <li class="fragment">More and less precision: <i class="qt-lemon"><code>short</code></i> and <i class="qt-lemon"><code>long</code></i></li>
+          <li class="fragment">Negative integers?: <i class="qt-lemon"><code>unsigned</code></i></li>
+        </ul>
       </section>
 
       <section data-transition="fade-in fade-out">
-        <h3>C references</h3>
+        <h3>Decimals</h3>
+        <ul>
+          <li>Precision plays an important role</li>
+          <li><i class="qt-lemon"><code>float</code></i> and <i class="qt-lemon"><code>double</code></i></li>
+        </ul>
       </section>
 
       <section data-transition="fade-in fade-out">
-        <h3>Some steps require a bit of work</h3>
+        <h3>Declaring and Initializing</h3>
+        <ul>
+          <li>You are familiar with:
+          <pre style="font-size: 80%;width: 60%;"><code class="python" data-trim data-noescape>
+          variable  # nope
+          variable = None
+          </code></pre></li>
+          <li class="fragment">Here you can declare a variable without initialization:
+          <pre style="font-size: 60%;width: 80%;"><code class="c" data-trim data-noescape>
+          int variable; // declared
+          int another_variable = 3; // initialized
+          </code></pre></li>
+        </ul>
       </section>
 
       <section data-transition="fade-in fade-out">
-        <h3>Compiling</h3>
+        <h3>Memory management</h3>
+      </section>
+
+      <section data-transition="fade-in fade-out">
+        <h3>C pointers (1/2)</h3>
+        <img style="width: 90%;" src="img/pointer.png" />
+      </section>
+
+      <section data-transition="fade-in fade-out">
+        <h3>C pointers (2/2)</h3>
+        <div id="left">
+        <pre class="fragment" data-fragment-index="1" style="font-size: 80%;width: 80%;"><code class="c" data-trim data-noescape>
+        int a = 42;
+        int *b = &amp;a;
+        </code></pre>
+        <pre class="fragment" data-fragment-index="2" style="font-size: 80%;width: 80%;"><code class="c" data-trim data-noescape>
+        int c = a;
+        int d = *b;
+        </code></pre>
+        <pre class="fragment" data-fragment-index="4" style="font-size: 80%;width: 80%;"><code class="c" data-trim data-noescape>
+        // Changes
+        *b = 10;
+        c = 22;
+        </code></pre>
+        </div>
+        <div id="right">
+        <pre class="fragment" data-fragment-index="3" style="font-size: 80%;width: 80%;"><code class="c" data-trim data-noescape>
+        // Before
+        a = 42
+        *b = 42
+        c = 42
+        d = 42
+        </code></pre>
+        <pre class="fragment" data-fragment-index="5" style="font-size: 80%;width: 80%;"><code class="c" data-trim data-noescape>
+        // After
+        a = 10
+        *b = 10
+        c = 22
+        d = 42
+        </code></pre>
+        </div>
+      </section>
+
+      <section data-transition="fade-in fade-out">
+        <h3>And finally: Compiling</h3>
+        <pre style="font-size: 90%;width: 90%;"><code class="C" data-trim data-noescape>
+        #include &lt;stdio.h&gt;
+
+        int main() {
+          printf("olá\n");
+          return 0;
+        }
+        </code></pre>
+        <pre class="fragment" style="font-size: 70%;width: 90%;"><code class="bash" data-trim data-noescape>
+        $ gcc main.c  # this generates 'a.out'
+        $ gcc main.c -o main  # and this 'main'
+        $ ./main
+        olá
+        </code></pre>
       </section>
 
       <section data-transition="fade-in fade-out">
@@ -434,50 +555,236 @@
       </section>
 
       <section data-transition="fade-in fade-out">
-        <p>Maybe some people think...</p>
-        <h3>Python is easier</h3>
+        <h3 class="r-fit-text">Maybe you are thinking...</h3>
+        <h3 class="r-fit-text">Python is <i class="qt-neon">easier</i></h3>
       </section>
 
       <section data-transition="fade-in fade-out">
-        <h3>snippet</h3>
+        <pre style="font-size: 100%;width: 80%;"><code class="python" data-trim data-noescape>
+        f = lambda x, m: x + m(x)
+        </code></pre>
       </section>
 
       <section data-transition="fade-in fade-out">
-        <h3>C snippets for CPython understanding</h3>
-        <ul>
-          <li>Crear un str</li>
-          <li>Crear un list</li>
-          <li>Crear un dict</li>
+        <pre style="font-size: 150%;width: 80%;"><code class="python" data-trim data-noescape>
+        *s,='abcde'
+        </code></pre>
+      </section>
+
+      <section data-transition="fade-in fade-out">
+        <pre style="font-size: 60%;width: 80%;"><code class="python" data-trim data-noescape>
+        SuperList = type(
+          "SuperList",
+          (list, ),
+          dict(
+            y=42,
+            hidden=lambda x: x.upper() if x*0=="" else x
+          )
+        )
+
+        l = SuperList()
+        l.append(100)
+        print(l.hidden("Hello"))
+        </code></pre>
+      </section>
+
+      <section data-transition="fade-in fade-out">
+        <pre style="font-size: 80%;width: 80%;"><code class="python" data-trim data-noescape>
+        _="_=%r;print(_%%_)";print(_%_)
+        </code></pre>
+      </section>
+
+      <section data-transition="fade-in fade-out">
+        <pre style="font-size: 150%;width: 50%;"><code class="python" data-trim data-noescape>
+        22&gt;&gt;i&amp;1
+        </code></pre>
+      </section>
+
+      <section data-transition="fade-in fade-out">
+        <pre style="font-size: 150%;width: 50%;"><code class="python" data-trim data-noescape>
+        n&amp;~-n&lt;1
+        </code></pre>
+      </section>
+
+      <section data-transition="fade-in fade-out">
+        <pre style="font-size: 150%;width: 70%;"><code class="python" data-trim data-noescape>
+        K1FNr1hQ=K*KN;K
+        </code></pre>
+        <h4 class="fragment">but that's <i class="qt-lemon">Pyth</i> not Python</h4>
+        <a class="fragment" href="https://pyth.readthedocs.io/">pyth.readthedocs.io</a>
+      </section>
+
+      <section data-transition="fade-in fade-out">
+        <h3 class="r-fit-text">all languages can be</h3>
+        <h2 class="r-fit-text"><i class="red">Hard</i> or <i class="qt-neon">Easy</i></h2>
+      </section>
+
+      <section data-transition="fade-in fade-out">
+        <h3 class="r-fit-text">The CPython API</h3>
+        <h3 class="r-fit-text"><i class="qt-neon">helps you</i> a lot</h3>
+      </section>
+
+      <section data-transition="fade-in fade-out">
+        <h3>Strings</h3>
+        <p>
+          <a href="https://docs.python.org/3/c-api/unicode.html">docs.python.org/3/c-api/unicode.html</a>
+        </p>
+        <pre style="font-size: 70%;width: 80%;"><code class="c" data-trim data-noescape>
+        char msg[] = "Hello World!";
+        PyObject *s = PyUnicode_FromString(msg);
+        ...
+        Py_ssize_t  = PyUnicode_GetLength(s);
+        </code></pre>
+      </section>
+
+      <section data-transition="fade-in fade-out">
+        <h3>Lists</h3>
+        <p>
+          <a href="https://docs.python.org/3/c-api/unicode.html">docs.python.org/3/c-api/unicode.html</a>
+        </p>
+        <pre style="font-size: 70%;width: 80%;"><code class="c" data-trim data-noescape>
+        char msg[] = "Hello World!";
+        PyObject *s = PyUnicode_FromString(msg);
+
+        PyObject *l = PyList_New(0);
+        PyList_Append(l, s);
+        ...
+        </code></pre>
+      </section>
+
+      <section data-transition="fade-in fade-out">
+        <h3>Check what's the PyObject storing</h3>
+        <pre style="font-size: 80%;width: 80%;"><code class="c" data-trim data-noescape>
+        int PyUnicode_Check(PyObject *o);
+
+        int PyList_Check(PyObject *o);
+
+        int PyDict_Check(PyObject *o);
+
+        int PyFloat_Check(PyObject *o);
+
+        int PyTuple_Check(PyObject *o);
+        </code></pre>
+      </section>
+
+      <section data-transition="fade-in fade-out">
+        <h3>Parse arguments</h3>
+        <pre style="font-size: 50%;width: 100%;"><code class="c" data-trim data-noescape>
+        static PyObject* glob(PyObject* self, PyObject* args,
+                              PyObject* kwds){
+
+          const char *kwlist[] = {"directory", "recursive", 0};
+          const char *directory = nullptr;
+          const int *recursive = nullptr;
+
+          if (!PyArg_ParseTupleAndKeywords(args, kwds,
+                                           "z|p",
+                                           const_cast&lt;char **&gt;(kwlist),
+                                           &amp;directory,
+                                           &amp;recursive)) {
+            return nullptr;
+          }
+          ...
+        </code></pre>
+      </section>
+
+
+      <section data-transition="fade-in fade-out">
+        <h3>That looks simpler...?</h3>
+      </section>
+
+      <section data-transition="fade-in fade-out">
+        <h3>Python extension with C</h3>
+        TODO
+      </section>
+
+      <section data-transition="fade-in fade-out">
+        <h3 class="r-fit-text">Real snippets <i class="qt-neon">freshly</i> served</h3>
+        <h3 class="r-fit-text">from the <i class="qt-lemon">CPython</i> repo</h3>
+      </section>
+
+      <section data-transition="fade-in fade-out">
+        <h3>list.append (1/2)</h3>
+        <pre style="font-size: 50%;width: 90%;"><code class="c" data-trim data-noescape>
+        static PyObject *
+        list_append(PyListObject *self, PyObject *object)
+        {
+            if (_PyList_AppendTakeRef(self, Py_NewRef(object)) < 0) {
+                return NULL;
+            }
+            Py_RETURN_NONE;
+        }
+        </code></pre>
+      </section>
+
+      <section data-transition="fade-in fade-out">
+        <h3>list.append (2/2)</h3>
+        <pre style="font-size: 45%;width: 90%;"><code class="c" data-trim data-noescape>
+        int
+        _PyList_AppendTakeRefListResize(PyListObject *self, PyObject *newitem)
+        {
+            Py_ssize_t len = PyList_GET_SIZE(self);
+            assert(self->allocated == -1 || self->allocated == len);
+            if (list_resize(self, len + 1) < 0) {
+                Py_DECREF(newitem);
+                return -1;
+            }
+            PyList_SET_ITEM(self, len, newitem);
+            return 0;
+        }
+        </code></pre>
+      </section>
+
+      <section data-transition="fade-in fade-out">
+        <h3>CPython objects lifecycle (1/219)</h3>
+        <blockquote class="fragment">Objects lives are controlled by a <i class="qt-lemon">reference counter</i>.</blockquote>
+
+        <ul style="font-style: 60%;">
+          <li class="fragment">If an object has <i class="red">no</i> references, it's <i class="red">garbaged collected</i>.</li>
+          <li class="fragment">If you are <i class="qt-neon">using*</i> the object, you <i class="qt-neon">increase</i> one reference count.</li>
         </ul>
       </section>
 
       <section data-transition="fade-in fade-out">
-        <h3>CPython objects lifecycle</h3>
+        <h3>CPython objects lifecycle (2/219)</h3>
+        <pre  class="fade-in" data-fragment-index="1"style="font-size: 80%;width: 90%;">
+        <code class="hljs python fragment" data-trim data-noescape>
+        <span class="fragment fade-in" data-fragment-index="2">>>> import sys</span></code>
+        <code class="hljs python fragment" data-trim data-noescape>
+        <span class="fragment fade-in" data-fragment-index="2">>>> import sys</span>
+        <span class="fragment fade-in" data-fragment-index="3">>>> a = [1,2,3]</span>
+        </code>
+        <code class="hljs python fragment" data-trim data-noescape>
+        <span class="fragment fade-in" data-fragment-index="2">>>> import sys</span>
+        <span class="fragment fade-in" data-fragment-index="3">>>> a = [1,2,3]</span>
+        <span class="fragment fade-in" data-fragment-index="4">>>> b = a</span>
+        </code>
+        <code class="hljs python fragment" data-trim data-noescape>
+        <span class="fragment fade-in" data-fragment-index="2">>>> import sys</span>
+        <span class="fragment fade-in" data-fragment-index="3">>>> a = [1,2,3]</span>
+        <span class="fragment fade-in" data-fragment-index="4">>>> b = a</span>
+        <span class="fragment fade-in" data-fragment-index="5">>>> sys.getrefcount(a)</span>
+        </code>
+        <code class="hljs python fragment" data-trim data-noescape>
+        <span class="fragment fade-in" data-fragment-index="2">>>> import sys</span>
+        <span class="fragment fade-in" data-fragment-index="3">>>> a = [1,2,3]</span>
+        <span class="fragment fade-in" data-fragment-index="4">>>> b = a</span>
+        <span class="fragment fade-in" data-fragment-index="5">>>> sys.getrefcount(a)</span>
+        <span class="fragment fade-in" data-fragment-index="6">3</span>
+        </code></pre>
       </section>
 
       <section data-transition="fade-in fade-out">
-        <h3>Python Module with C</h3>
+        <h4 class="r-fit-text fragment"><i class="qt-violet">we will keep the other 217 slides for another time.</i></h4>
+        <h3 class="r-fit-text fragment">Is this <i class="qt-neon">useful</i> IRL?</h3>
       </section>
 
       <section data-transition="fade-in fade-out">
-        <h3>Deep dive into some Data Types</h3>
-        list append
-      </section>
-
-      <section data-transition="fade-in fade-out">
-        <h3>Deep dive into some Data Types</h3>
-        set update
-      </section>
-
-      <section data-transition="fade-in fade-out">
-        <h3>Is this useful IRL?</h3>
-      </section>
-
-      <section data-transition="fade-in fade-out">
-        <div id="left30">
+        <h1>yes.</h1>
+        <div id="left30" class="fragment" data-fragment-index="2">
           <img src="img/qt_neon.png"/>
         </div>
-        <div id="right70">
+        <div id="right70" class="fragment" data-fragment-index="2">
           <ul>
             <li>Cross platform framework for UI interfaces, and applications.</li>
             <li>Started in 1991</li>
@@ -488,11 +795,99 @@
       </section>
 
       <section data-transition="fade-in fade-out">
-        <h3>Exposing large projects in other languages</h3>
+        <h3 class="r-fit-text">Exposing projects in <i class="qt-lemon">other languages</i></h3>
+        <h4 class="r-fit-text">is <i class="red">not</i> simple</h4>
       </section>
 
       <section data-transition="fade-in fade-out">
-        <h3>Modify Python at your will</h3>
+        <h3 class="r-fit-text">Binding generators</h3>
+        <h3 class="r-fit-text">to the rescue</h3>
+      </section>
+
+      <section data-transition="fade-in fade-out">
+      <table style="width:100%;font-size: 60%;">
+      <tr>
+        <th></th>
+        <th><i class="blue">Type</i></th>
+        <th><i class="blue">Lang</i></th>
+        <th><i class="blue">Python</i></th>
+        <th><i class="blue">License</i></th>
+        <th><i class="blue">Generates</i></th>
+      </tr>
+      <tr>
+        <td><i class="yellow">boost::python</i></td>
+        <td>Interface</td>
+        <td>C++11<i class="yellow">+</i></td>
+        <td>2.7, 3.0</td>
+        <td>BSL-1</td>
+        <td>-</td>
+      </tr>
+      <tr>
+        <td><i class="yellow">SWIG</i></td>
+        <td>Code gen</td>
+        <td>C++11<i class="yellow">+</i></td>
+        <td>1.5+</td>
+        <td>GPL3</td>
+        <td>-</td>
+      </tr>
+      <tr>
+        <td><i class="green">shiboken</i></td>
+        <td>Code gen</td>
+        <td>C++11 (*)</td>
+        <td>2.7, 3.5+</td>
+        <td>LGPLv3</td>
+        <td>CPython, PyPy</td>
+      </tr>
+      <tr>
+        <td><i class="yellow">sip</i></td>
+        <td>Code gen</td>
+        <td>C++11 (*)</td>
+        <td>3.5+</td>
+        <td>GPLv3</td>
+        <td>CPython</td>
+      </tr>
+      <tr>
+        <td><i class="yellow">pyBind11</i></td>
+        <td>Interface</td>
+        <td>C++11 (*)</td>
+        <td>2.7, 3.x</td>
+        <td>BSD-3</td>
+        <td>-</td>
+      </tr>
+      <tr>
+        <td><i class="yellow">cffi</i></td>
+        <td>Interface</td>
+        <td>C89, C99 (*)</td>
+        <td>2.6+, 3.0+</td>
+        <td>MIT</td>
+        <td>-</td>
+      </tr>
+      <tr>
+        <td><i class="yellow">cppyy</i></td>
+        <td>Interface</td>
+        <td>C++11<i class="yellow">+</i></td>
+        <td>2 and 3</td>
+        <td>UC</td>
+        <td>-</td>
+      </tr>
+      <tr>
+        <td><i class="yellow">PyO3</i></td>
+        <td>Code gen</td>
+        <td>Rust 1.48+</td>
+        <td>3.7+</td>
+        <td>Apache/MIT</td>
+        <td>CPython/PyPy</td>
+      </tr>
+      </table>
+
+      </section>
+
+      <section data-transition="fade-in fade-out">
+        <h3>Can Python do aything?</h3>
+      </section>
+
+      <section data-transition="fade-in fade-out">
+        <h3><i class="qt-neon">You</i> can do anything</h3>
       </section>
 
       <section data-transition="fade-in fade-out">
@@ -528,8 +923,9 @@
     // - https://revealjs.com/config/
     Reveal.initialize({
       hash: true,
+      transitionSpeed: 'fast',
 
-      // Learn about plugins: https://revealjs.com/plugins/
+        // Learn about plugins: https://revealjs.com/plugins/
       plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
     });
   </script>
@@ -547,7 +943,7 @@
       </div>
   </div>
 
-  <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+  <script src="js/jquery-2.2.4.min.js"></script>
   <script type="text/javascript">
     // 3. On Reveal.js ready event, copy header/footer <div> into each `.slide-background` <div>
     var header = $('#header').html();
