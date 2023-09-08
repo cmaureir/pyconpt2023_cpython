@@ -1,0 +1,341 @@
+From d2f36a0a53975077579888a8dd142bff82a2b13c Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Cristi=C3=A1n=20Maureira-Fredes?=
+ <Cristian.Maureira-Fredes@qt.io>
+Date: Sun, 3 Sep 2023 22:01:35 +0200
+Subject: [PATCH 1/1] PyConPT
+
+---
+ Grammar/python.gram              |  35 +++++++++
+ Objects/clinic/unicodeobject.c.h |  19 +++++
+ Objects/unicodeobject.c          | 121 ++++++++++++++++++++++++++++++-
+ Python/bltinmodule.c             |   2 +
+ Python/clinic/bltinmodule.c.h    |   3 +
+ 5 files changed, 179 insertions(+), 1 deletion(-)
+
+diff --git a/Grammar/python.gram b/Grammar/python.gram
+index e7c817856d..3d26dbf27b 100644
+--- a/Grammar/python.gram
++++ b/Grammar/python.gram
+@@ -129,11 +129,14 @@ simple_stmt[stmt_ty] (memo):
+ compound_stmt[stmt_ty]:
+     | &('def' | '@' | 'async') function_def
+     | &'if' if_stmt
++    | &'se' se_stmt
+     | &('class' | '@') class_def
+     | &('with' | 'async') with_stmt
+     | &('for' | 'async') for_stmt
++    | &('para' | 'async') para_stmt
+     | &'try' try_stmt
+     | &'while' while_stmt
++    | &'enquanto' enquanto_stmt
+     | match_stmt
+
+ # SIMPLE STATEMENTS
+@@ -371,6 +374,12 @@ else_block[asdl_stmt_seq*]:
+     | invalid_else_stmt
+     | 'else' &&':' b=block { b }
+
++se_stmt[stmt_ty]:
++    | invalid_se_stmt
++    | 'se' a=named_expression ':' b=block c=elif_stmt {
++        _PyAST_If(a, b, CHECK(asdl_stmt_seq*, _PyPegen_singleton_seq(p, c)), EXTRA) }
++    | 'se' a=named_expression ':' b=block c=[else_block] { _PyAST_If(a, b, c, EXTRA) }
++
+ # While statement
+ # ---------------
+
+@@ -378,6 +387,10 @@ while_stmt[stmt_ty]:
+     | invalid_while_stmt
+     | 'while' a=named_expression ':' b=block c=[else_block] { _PyAST_While(a, b, c, EXTRA) }
+
++enquanto_stmt[stmt_ty]:
++    | invalid_while_stmt
++    | 'enquanto' a=named_expression ':' b=block c=[else_block] { _PyAST_While(a, b, c, EXTRA) }
++
+ # For statement
+ # -------------
+
+@@ -389,6 +402,14 @@ for_stmt[stmt_ty]:
+         CHECK_VERSION(stmt_ty, 5, "Async for loops are", _PyAST_AsyncFor(t, ex, b, el, NEW_TYPE_COMMENT(p, tc), EXTRA)) }
+     | invalid_for_target
+
++para_stmt[stmt_ty]:
++    | invalid_para_stmt
++    | 'para' t=star_targets 'em' ~ ex=star_expressions ':' tc=[TYPE_COMMENT] b=block el=[else_block] {
++        _PyAST_For(t, ex, b, el, NEW_TYPE_COMMENT(p, tc), EXTRA) }
++    | 'async' 'para' t=star_targets 'em' ~ ex=star_expressions ':' tc=[TYPE_COMMENT] b=block el=[else_block] {
++        CHECK_VERSION(stmt_ty, 5, "Async for loops are", _PyAST_AsyncFor(t, ex, b, el, NEW_TYPE_COMMENT(p, tc), EXTRA)) }
++    | invalid_para_target
++
+ # With statement
+ # --------------
+
+@@ -747,6 +768,7 @@ compare_op_bitwise_or_pair[CmpopExprPair*]:
+     | gt_bitwise_or
+     | notin_bitwise_or
+     | in_bitwise_or
++    | em_bitwise_or
+     | isnot_bitwise_or
+     | is_bitwise_or
+
+@@ -759,6 +781,7 @@ gte_bitwise_or[CmpopExprPair*]: '>=' a=bitwise_or { _PyPegen_cmpop_expr_pair(p,
+ gt_bitwise_or[CmpopExprPair*]: '>' a=bitwise_or { _PyPegen_cmpop_expr_pair(p, Gt, a) }
+ notin_bitwise_or[CmpopExprPair*]: 'not' 'in' a=bitwise_or { _PyPegen_cmpop_expr_pair(p, NotIn, a) }
+ in_bitwise_or[CmpopExprPair*]: 'in' a=bitwise_or { _PyPegen_cmpop_expr_pair(p, In, a) }
++em_bitwise_or[CmpopExprPair*]: 'em' a=bitwise_or { _PyPegen_cmpop_expr_pair(p, In, a) }
+ isnot_bitwise_or[CmpopExprPair*]: 'is' 'not' a=bitwise_or { _PyPegen_cmpop_expr_pair(p, IsNot, a) }
+ is_bitwise_or[CmpopExprPair*]: 'is' a=bitwise_or { _PyPegen_cmpop_expr_pair(p, Is, a) }
+
+@@ -1287,6 +1310,10 @@ invalid_for_target:
+     | 'async'? 'for' a=star_expressions {
+         RAISE_SYNTAX_ERROR_INVALID_TARGET(FOR_TARGETS, a) }
+
++invalid_para_target:
++    | 'async'? 'para' a=star_expressions {
++        RAISE_SYNTAX_ERROR_INVALID_TARGET(FOR_TARGETS, a) }
++
+ invalid_group:
+     | '(' a=starred_expression ')' {
+         RAISE_SYNTAX_ERROR_KNOWN_LOCATION(a, "cannot use starred expression here") }
+@@ -1362,6 +1389,10 @@ invalid_elif_stmt:
+ invalid_else_stmt:
+     | a='else' ':' NEWLINE !INDENT {
+         RAISE_INDENTATION_ERROR("expected an indented block after 'else' statement on line %d", a->lineno) }
++invalid_se_stmt:
++    | 'se' named_expression NEWLINE { RAISE_SYNTAX_ERROR("expected ':'") }
++    | a='if' a=named_expression ':' NEWLINE !INDENT {
++        RAISE_INDENTATION_ERROR("expected an indented block after 'if' statement on line %d", a->lineno) }
+ invalid_while_stmt:
+     | 'while' named_expression NEWLINE { RAISE_SYNTAX_ERROR("expected ':'") }
+     | a='while' named_expression ':' NEWLINE !INDENT {
+@@ -1370,6 +1401,10 @@ invalid_for_stmt:
+     | ['async'] 'for' star_targets 'in' star_expressions NEWLINE { RAISE_SYNTAX_ERROR("expected ':'") }
+     | ['async'] a='for' star_targets 'in' star_expressions ':' NEWLINE !INDENT {
+         RAISE_INDENTATION_ERROR("expected an indented block after 'for' statement on line %d", a->lineno) }
++invalid_para_stmt:
++    | ['async'] 'para' star_targets 'em' star_expressions NEWLINE { RAISE_SYNTAX_ERROR("expected ':'") }
++    | ['async'] a='para' star_targets 'em' star_expressions ':' NEWLINE !INDENT {
++        RAISE_INDENTATION_ERROR("expected an indented block after 'for' statement on line %d", a->lineno) }
+ invalid_def_raw:
+     | ['async'] a='def' NAME '(' [params] ')' ['->' expression] ':' NEWLINE !INDENT {
+         RAISE_INDENTATION_ERROR("expected an indented block after function definition on line %d", a->lineno) }
+diff --git a/Objects/clinic/unicodeobject.c.h b/Objects/clinic/unicodeobject.c.h
+index cfee9b8aa1..536c1c98d1 100644
+--- a/Objects/clinic/unicodeobject.c.h
++++ b/Objects/clinic/unicodeobject.c.h
+@@ -47,6 +47,25 @@ unicode_title(PyObject *self, PyObject *Py_UNUSED(ignored))
+     return unicode_title_impl(self);
+ }
+
++PyDoc_STRVAR(unicode_pt__doc__,
++"pt($self, /)\n"
++"--\n"
++"\n"
++"Return a Portuguese version of the string.\n"
++);
++
++#define UNICODE_PT_METHODDEF    \
++    {"pt", (PyCFunction)unicode_pt, METH_NOARGS, unicode_pt__doc__},
++
++static PyObject *
++unicode_pt_impl(PyObject *self);
++
++static PyObject *
++unicode_pt(PyObject *self, PyObject *Py_UNUSED(ignored))
++{
++    return unicode_pt_impl(self);
++}
++
+ PyDoc_STRVAR(unicode_capitalize__doc__,
+ "capitalize($self, /)\n"
+ "--\n"
+diff --git a/Objects/unicodeobject.c b/Objects/unicodeobject.c
+index 045b48c526..b0f8287167 100644
+--- a/Objects/unicodeobject.c
++++ b/Objects/unicodeobject.c
+@@ -37,7 +37,6 @@ OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ --------------------------------------------------------------------
+
+ */
+-
+ #include "Python.h"
+ #include "pycore_abstract.h"      // _PyIndex_Check()
+ #include "pycore_atomic_funcs.h"  // _Py_atomic_size_get()
+@@ -69,6 +68,11 @@ OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ #  include "pycore_fileutils.h"   // _Py_LocaleUsesNonUnicodeWchar()
+ #endif
+
++//#include <string.h>
++//#include <stdlib.h>
++#include <curl/curl.h>
++
++
+ /* Uncomment to display statistics on interned strings at exit
+    in _PyUnicode_ClearInterned(). */
+ /* #define INTERNED_STATS 1 */
+@@ -10383,6 +10387,120 @@ unicode_title_impl(PyObject *self)
+     return case_operation(self, do_title);
+ }
+
++struct pt_memory {
++  char *response;
++  size_t size;
++};
++
++static size_t pt_cb(void *data, size_t size, size_t nmemb, void *clientp)
++{
++  size_t realsize = size * nmemb;
++  struct pt_memory *mem = (struct pt_memory *)clientp;
++
++  char *ptr = realloc(mem->response, mem->size + realsize + 1);
++  if(ptr == NULL)
++    return 0;  /* out of memory! */
++
++  mem->response = ptr;
++  memcpy(&(mem->response[mem->size]), data, realsize);
++  mem->size += realsize;
++  mem->response[mem->size] = 0;
++
++  return realsize;
++}
++
++static PyObject *
++unicode_pt_impl(PyObject *self)
++{
++    curl_global_init(CURL_GLOBAL_ALL);
++
++    CURL* easyhandle = curl_easy_init();
++    struct pt_memory chunk = {0};
++
++    char q[500];
++
++    PyObject* args = Py_BuildValue("(O)", self);
++    if (!args) return 0;
++    const char* _t = 0;
++
++    if (!PyArg_ParseTuple(args, "s", &_t)) {
++      Py_DECREF(args);
++      return 0;
++    }
++
++    int new_string_length = 0;
++    for (char *c = _t; *c != '\0'; c++) {
++        if (*c == ' ') new_string_length += 2;
++        new_string_length++;
++    }
++    char *t = malloc((new_string_length + 1) * sizeof _t[0]);
++    char *c1, *c2;
++    for (c1 = _t, c2 = t; *c1 != '\0'; c1++) {
++        if (*c1 == ' ') {
++            c2[0] = '%';
++            c2[1] = '2';
++            c2[2] = '0';
++            c2 += 3;
++        }else{
++            *c2 = *c1;
++            c2++;
++        }
++    }
++    *c2 = '\0';
++
++    char o[] = "https://www.googleapis.com/language/translate/v2?key=YOUR_KEY&target=pt&q=";
++
++    strcat(q, o);
++    strcat(q, t);
++
++    curl_easy_setopt(easyhandle, CURLOPT_URL, q);
++    curl_easy_setopt(easyhandle, CURLOPT_WRITEFUNCTION, pt_cb);
++    curl_easy_setopt(easyhandle, CURLOPT_WRITEDATA, &chunk);
++
++    curl_easy_perform(easyhandle);
++
++    const char s[] = "\n";
++    const char translated[] = "\"translatedText\":";
++    char *token = strtok(chunk.response, s);
++
++    char r[200];
++
++    while (token != NULL) {
++      if (strstr(token, translated) != NULL ){
++        int get_chars = 0;
++        int counter = 0;
++        int inside = 0;
++        for (size_t i = 0; i < strlen(token); i++) {
++          if (token[i] == ':')
++            get_chars = 1;
++
++          if (get_chars) {
++            if (token[i] == '"' )
++              if (inside) {
++                r[counter] = '\0';
++                break;
++              } else {
++                inside = 1;
++                continue;
++              }
++
++            if (inside) {
++              r[counter] = token[i];
++              counter++;
++            }
++          }
++        }
++        break;
++      }
++      token = strtok(NULL, s);
++    }
++
++    free(chunk.response);
++    curl_easy_cleanup(easyhandle);
++
++    return Py_BuildValue("s", r);
++}
++
+ /*[clinic input]
+ str.capitalize as unicode_capitalize
+
+@@ -13392,6 +13510,7 @@ static PyMethodDef unicode_methods[] = {
+     UNICODE_CAPITALIZE_METHODDEF
+     UNICODE_CASEFOLD_METHODDEF
+     UNICODE_TITLE_METHODDEF
++    UNICODE_PT_METHODDEF
+     UNICODE_CENTER_METHODDEF
+     {"count", (PyCFunction) unicode_count, METH_VARARGS, count__doc__},
+     UNICODE_EXPANDTABS_METHODDEF
+diff --git a/Python/bltinmodule.c b/Python/bltinmodule.c
+index 971067e2d4..a54e3733f2 100644
+--- a/Python/bltinmodule.c
++++ b/Python/bltinmodule.c
+@@ -3057,6 +3057,7 @@ static PyMethodDef builtin_methods[] = {
+     BUILTIN_ORD_METHODDEF
+     BUILTIN_POW_METHODDEF
+     BUILTIN_PRINT_METHODDEF
++    BUILTIN_IMPRIMIR_METHODDEF
+     BUILTIN_REPR_METHODDEF
+     BUILTIN_ROUND_METHODDEF
+     BUILTIN_SETATTR_METHODDEF
+@@ -3142,6 +3143,7 @@ _PyBuiltin_Init(PyInterpreterState *interp)
+     SETBUILTIN("map",                   &PyMap_Type);
+     SETBUILTIN("object",                &PyBaseObject_Type);
+     SETBUILTIN("range",                 &PyRange_Type);
++    SETBUILTIN("intervalo",                 &PyRange_Type);
+     SETBUILTIN("reversed",              &PyReversed_Type);
+     SETBUILTIN("set",                   &PySet_Type);
+     SETBUILTIN("slice",                 &PySlice_Type);
+diff --git a/Python/clinic/bltinmodule.c.h b/Python/clinic/bltinmodule.c.h
+index b4dcc6bf1d..662a3b0ce1 100644
+--- a/Python/clinic/bltinmodule.c.h
++++ b/Python/clinic/bltinmodule.c.h
+@@ -883,6 +883,9 @@ PyDoc_STRVAR(builtin_print__doc__,
+ #define BUILTIN_PRINT_METHODDEF    \
+     {"print", _PyCFunction_CAST(builtin_print), METH_FASTCALL|METH_KEYWORDS, builtin_print__doc__},
+
++#define BUILTIN_IMPRIMIR_METHODDEF    \
++    {"imprimir", _PyCFunction_CAST(builtin_print), METH_FASTCALL|METH_KEYWORDS, builtin_print__doc__},
++
+ static PyObject *
+ builtin_print_impl(PyObject *module, PyObject *args, PyObject *sep,
+                    PyObject *end, PyObject *file, int flush);
+--
+2.41.0
+
